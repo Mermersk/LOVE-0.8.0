@@ -23,8 +23,8 @@ function love.load()
 	hreyfifugl_y = 100
 	
 	--sound
-	ond = love.audio.newSource("duck.mp3")
-	on = love.audio.newSource("on.wav")
+	ond = love.audio.newSource("duck.mp3", "static")
+	on = love.audio.newSource("on.wav", "static")
 	
 	--Text
 	A = "Sometimes the russian way is the best way to fix"
@@ -37,7 +37,7 @@ function love.update(dt)
     hreyfifugl:update(dt)
 	fuglrhreyfing:update(dt)
 	--Quackery sound
-	if love.mouse.isDown("r") then
+	if love.mouse.isDown(2) then
 	    love.audio.play(ond)
 	end
 	
@@ -47,16 +47,16 @@ function love.draw()
     -- Drawing text, animations and pics
     love.graphics.draw(ljos)
 	love.graphics.setFont(font)
-	love.graphics.setColor(0, 100, 0) --green
+	setColor(0, 100, 0) --green
 	love.graphics.print(C, 690, 790)
 	love.graphics.print("Press ESCAPE key to quit", 2, 2)
 	love.graphics.print("Press RIGHT MOUSE-BUTTON to quack", 2, 35)
 	love.graphics.print("Objective: Fix the broken street lamp", 2, 70)
-	love.graphics.setColor(255, 255, 255) -- white
+	setColor(255, 255, 255) -- white
 	
 	hreyfifugl:draw(hreyfifugl_x, hreyfifugl_y, snuningur)
 	--Movement
-	if love.mouse.isDown("l") == true then
+	if love.mouse.isDown(1) == true then
 	    mx, my = love.mouse.getPosition()
 	        if hreyfifugl_x < mx then
 			    hreyfifugl_x = hreyfifugl_x + 3
@@ -90,9 +90,9 @@ function love.draw()
 	-- So this was easier
 	if ljos == dag then
 	    fuglrhreyfing:draw(900, 0)
-		love.graphics.setColor(0, 100, 0)
+		setColor(0, 100, 0)
 		love.graphics.print("End", 400, 400)
-		love.graphics.setColor(255, 255, 255)
+		setColor(255, 255, 255)
 	end
 		
 	
@@ -108,3 +108,19 @@ function love.keypressed(key)
 	end                                          
 end
 
+
+--In löve 0.11 the values for rgba go now from 0 to 1 instead of 0 to 255. But I dont want to rewrite all setColor function in this program so I replace the love.graphics.setColor function with a new one
+--which handles the conversion for me
+function setColor(r, g, b, a)
+	local r_new = r/255 --Divide with 255 to get the same value in 0-1 format
+	local g_new = g/255
+	local b_new = b/255
+
+	local a_new = 1 --If only rgb values are the input then go full alpha, if given do the calculations beneath
+	if a ~= nil then
+		a_new = a/255
+	end
+
+	love.graphics.setColor(r_new, g_new, b_new, a_new)
+
+end
